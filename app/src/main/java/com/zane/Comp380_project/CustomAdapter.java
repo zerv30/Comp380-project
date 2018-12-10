@@ -60,7 +60,7 @@ public class CustomAdapter extends ArrayAdapter<Event> {
                      editEventIntent.putExtra("time",time);
                      editEventIntent.putExtra("description",description);
                      ((Activity)getContext()).startActivityForResult(editEventIntent, 0);
-                     ((Activity)getContext()).finish();
+//                     ((Activity)getContext()).finish();
                 }else{
                     Toast.makeText(getContext(),"Error",Toast.LENGTH_SHORT).show();
                 }
