@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Main2Activity" />
-        <activity android:name=".NewEvent"></activity>
+        <activity android:name=".NewEvent" />
+        <activity android:name=".EditEvent"></activity>
     </application>
 
 </manifest>

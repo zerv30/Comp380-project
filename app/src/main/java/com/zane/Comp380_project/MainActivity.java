@@ -26,8 +26,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DataBaseHelper db = new DataBaseHelper(MainActivity.this);
         final CalendarView calendarView = findViewById(R.id.calendarView);
-        skipButton = findViewById(R.id.dateSkip);
+//        skipButton = findViewById(R.id.dateSkip);
 
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
@@ -35,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
         int year = c.get(Calendar.YEAR);
         final String currentDate = (month+1) + "/" + day + "/" + year;
         final String msg = "This feature isn't available at the moment";
-        skipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendarView.setDate(Calendar.getInstance().getTimeInMillis(),false,true);
-
-
-            }
-        });
+//        skipButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                calendarView.setDate(Calendar.getInstance().getTimeInMillis(),false,true);
+//
+//
+//            }
+//        });
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
