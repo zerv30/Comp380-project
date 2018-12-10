@@ -33,6 +33,9 @@ public class Main2Activity extends AppCompatActivity {
         Button button = findViewById(R.id.button2);
         eventList =findViewById(R.id.eventlist);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         mDataBaseHelper = new DataBaseHelper(this);
 
         //receives intent and displays date
@@ -59,7 +62,7 @@ public class Main2Activity extends AppCompatActivity {
             Intent newEvent = new Intent(Main2Activity.this,NewEvent.class);
             newEvent.putExtra("date",selectedDate);
             startActivity(newEvent);
-                finish();
+//                finish();
             }
         });
 

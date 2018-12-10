@@ -1,69 +1,101 @@
 package com.zane.Comp380_project;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
+
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//import com.applandeo.materialcalendarview.*;
+import com.applandeo.materialcalendarview.CalendarUtils;
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import static android.app.NotificationChannel.DEFAULT_CHANNEL_ID;
+import static android.graphics.Typeface.*;
 import static android.widget.Toast.LENGTH_SHORT;
+import static com.zane.Comp380_project.App.CHANNEL_1_ID;
 
 public class MainActivity extends AppCompatActivity {
     private  static final String TAG = "CalendarActivity";
-    //  private TextView theDate;
-//    ArrayList eventArray =  new ArrayList();
-    Button skipButton;
+    DataBaseHelper db;
+    CalendarView calendarView;
+    private NotificationManagerCompat notificationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DataBaseHelper db = new DataBaseHelper(MainActivity.this);
-        final CalendarView calendarView = findViewById(R.id.calendarView);
-//        skipButton = findViewById(R.id.dateSkip);
+         db = new DataBaseHelper(MainActivity.this);
+        calendarView = findViewById(R.id.calendarView);
+        getEvents();
+        notificationManager = NotificationManagerCompat.from(this);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("hello")
+                .setContentText("hi there")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
 
-        Calendar c = Calendar.getInstance();
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        int month = c.get(Calendar.MONTH);
-        int year = c.get(Calendar.YEAR);
-        final String currentDate = (month+1) + "/" + day + "/" + year;
-        final String msg = "This feature isn't available at the moment";
-//        skipButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                calendarView.setDate(Calendar.getInstance().getTimeInMillis(),false,true);
-//
-//
-//            }
-//        });
+        notificationManager.notify(1, notification);
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+
+
+
+            calendarView.setOnDayClickListener(new OnDayClickListener() {
             @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                // Note that months are indexed from 0. So, 0 means January, 1 means february, 2 means march etc.
-                // Log.e("abc","123");
-
-
-                String date = (month + 1) + "/" + dayOfMonth + "/" + year;
-                Log.d(TAG, "onSelectedDayChange: yyyy/mm/dd:" + date);
-
-                //Goes to Main2Activity
+            public void onDayClick(EventDay eventDay) {
+                Calendar clickedDayCalendar = eventDay.getCalendar();
+                int month = clickedDayCalendar.get(Calendar.MONTH) + 1;
+                int day = clickedDayCalendar.get(Calendar.DAY_OF_MONTH);
+                int year = clickedDayCalendar.get(Calendar.YEAR);
+                String date= month + "/" + day + "/" + year;
+                Toast.makeText(getApplicationContext(),date ,Toast.LENGTH_SHORT).show();
                 Intent selectedDay = new Intent(MainActivity.this, Main2Activity.class);
                 selectedDay.putExtra("date",date);
-
-                startActivity(selectedDay);
-
-
+                startActivityForResult(selectedDay,1);
             }
         });
+
+
+
+    }
+    private void getEvents(){
+        Cursor data = db.getData();
+        List<EventDay> apple = new ArrayList<>();
+        while(data.moveToNext()){
+            Calendar currentDay = Calendar.getInstance();
+            String date = data.getString(1);
+            String dateSplitter[] = date.split("/");
+            currentDay.set(Calendar.MONTH,Integer.parseInt(dateSplitter[0])-1);
+            currentDay.set(Calendar.DAY_OF_MONTH,Integer.parseInt(dateSplitter[1]));
+            currentDay.set(Calendar.YEAR,Integer.parseInt(dateSplitter[2]));
+
+                apple.add(new EventDay(currentDay, R.drawable.ic_access_time_black_24dp));
+        }
+        calendarView.setEvents(apple);
+
     }
 
 }
